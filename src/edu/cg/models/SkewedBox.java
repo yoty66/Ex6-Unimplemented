@@ -2,10 +2,13 @@ package edu.cg.models;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.util.texture.Texture;
 import edu.cg.algebra.Point;
 
 public class SkewedBox implements IRenderable {
 	private double length, height1, height2, depth1, depth2;
+	private Texture texture = null;
+
 
 	public SkewedBox() {
 		length = .1;
@@ -28,6 +31,8 @@ public class SkewedBox implements IRenderable {
 		// TODO : Render the skewed-box using. 
 		//        Use the fields: length, height1, height2, depth1, depth2
 
+
+
 		// From front view see SkwedBox.PPt  slide 1
 		//The D2xH2 from bottom-left point and clockwise order is:  p1,p2,p3,p4
 		double [] p1= { length/2.0,0.0,-depth2/2.0};
@@ -45,6 +50,9 @@ public class SkewedBox implements IRenderable {
 
 
 		gl.glBegin(GL2.GL_QUADS);
+
+		gl.glEnable(GL2.GL_NORMALIZE);
+
 
 		//Front view x-axis:
         gl.glVertex3d(p4[0],p4[1],p4[2]);//p4
