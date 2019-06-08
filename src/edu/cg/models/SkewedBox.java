@@ -7,7 +7,7 @@ import edu.cg.algebra.Point;
 
 public class SkewedBox implements IRenderable {
 	private double length, height1, height2, depth1, depth2;
-	private Texture texture = null;
+	private Texture boxTexture = null;
 
 
 	public SkewedBox() {
@@ -91,8 +91,11 @@ public class SkewedBox implements IRenderable {
 		gl.glEnd();
 
 	}
+	public SkewedBox(double allDimensions, boolean useTexture ) {//TODO: Write this method YOtam }
+	}
 	@Override
-	public void destroy(GL2 gl) {//TODO:write this shit}
+	public void destroy(GL2 gl) {
+		this.boxTexture.destroy(gl);
 	}
 	@Override
 	public void init(GL2 gl) {

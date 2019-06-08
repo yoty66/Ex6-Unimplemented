@@ -1,6 +1,8 @@
 package edu.cg.models;
 
 import java.io.File;
+import java.io.IOException;
+import java.rmi.ServerError;
 import java.util.LinkedList;
 
 import com.jogamp.opengl.GL2;
@@ -23,7 +25,10 @@ public class TrackSegment implements IRenderable {
 	private LinkedList<Point> boxesLocations; // Store the boxes centroids (center points) here.
 	// TODO Add additional fields, for example:
 	//		- Add wooden box model (you will only need one object which can be rendered many times)
+	private SkewedBox box=null;
 	//      - Add grass and asphalt textures.
+	private Texture AsphaltTexture;
+	private Texture GrassTexture;
 
 	public void setDifficulty(double difficulty) {
 		// TODO: Set the difficulty of the track segment. Here you decide what are the boxes locations.
@@ -66,6 +71,7 @@ public class TrackSegment implements IRenderable {
 		// TODO initialize your fields here.
 		// Here by setting up the difficulty, we decide on the boxes locations.
 		setDifficulty(difficulty);
+		this.box=new SkewedBox(BOX_LENGTH,true);
 	}
 
 	@Override
@@ -73,13 +79,25 @@ public class TrackSegment implements IRenderable {
 		// TODO: Render the track segment
 	}
 
+
+//	private void render BOxes
 	@Override
 	public void init(GL2 gl) {
 		// TODO: Initialize textures.
+		try{
+		this.AsphaltTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
+		this.GrassTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
+		}
+		catch (IOException e)
+		{
+			System.err.println("Failed loading textures"+e.getMessage());
+		}
 	}
-
 	public void destroy(GL2 gl) {
 		// TODO: destroy textures.
+		this.AsphaltTexture.destroy(gl);
+		this.GrassTexture.destroy(gl);
+		this.box.destroy(gl);
 	}
 
 }

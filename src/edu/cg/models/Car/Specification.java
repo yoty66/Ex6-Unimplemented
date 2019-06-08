@@ -74,4 +74,10 @@ public class Specification {
 	public static final double S_WINGS_HEIGHT = 0.15;
 	public static final double S_BASE_HEIGHT = 0.015;
 	public static final double S_LENGTH = 0.15;
+
+
+
+	//Track
+	//Segment
+	public static final double TRACK_SEGMENT_LENGTH=500;
 }
