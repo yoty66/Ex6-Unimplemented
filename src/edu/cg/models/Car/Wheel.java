@@ -14,7 +14,7 @@ public class Wheel implements IRenderable {
 	@Override
 	public void render(GL2 gl) {
 		// The wheel should be in the center relative to its local coordinate system.
-
+//
 		Materials.setMaterialTire(gl);
 		GLU glu=new GLU();
 		GLUquadric q=glu.gluNewQuadric();
@@ -44,6 +44,11 @@ public class Wheel implements IRenderable {
 
 		gl.glPopMatrix();
 		glu.gluDeleteQuadric(q);
+
+
+
+
+
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import edu.cg.algebra.Vec;
+import edu.cg.models.Car.Wheel;
 import edu.cg.models.Track;
 import edu.cg.models.TrackSegment;
 import edu.cg.models.Car.F1Car;
@@ -59,7 +60,7 @@ public class NeedForSpeed implements GLEventListener {
 		// TODO: This is the flow in which we render the scene. You can use different flow.
 		// Step (1) You should update the accumulated translation that needs to be
 		// applied on the car, camera and light sources.
-		updateCarCameraTranslation(gl);
+//		updateCarCameraTranslation(gl);
 		// Step (2) Position the camera and setup its orientation
 		setupCamera(gl);
 		// Step (3) setup the lighting.
@@ -84,9 +85,12 @@ public class NeedForSpeed implements GLEventListener {
 
 
 	private void setupLights(GL2 gl) {
+		//TODO:This is a Direct Copy
 		if (isDayMode) {
 			// TODO Setup day lighting.
 			// * Remember: switch-off any light sources that were used in night mode
+			gl.glDisable(16385);
+			this.setupSun(gl, 16384);
 		} else {
 			// TODO Setup night lighting.
 			// * Remember: switch-off any light sources that are used in day mode
@@ -101,6 +105,16 @@ public class NeedForSpeed implements GLEventListener {
 	}
 
 	private void renderCar(GL2 gl) {
+		//TODO:This is a Direct Copy
+		double carRotation = this.gameState.getCarRotation();
+		gl.glPushMatrix();
+		gl.glTranslated(0.0D + (double)this.carCameraTranslation.x, 0.15D + (double)this.carCameraTranslation.y, -6.6D + (double)this.carCameraTranslation.z);
+		gl.glRotated(-carRotation, 0.0D, 1.0D, 0.0D);
+		gl.glRotated(90.0D, 0.0D, 0.1D, 0.0D);
+		gl.glScaled(4.0D, 4.0D, 4.0D);
+		this.car.render(gl);
+//		new Wheel().render(gl);
+		gl.glPopMatrix();
 		// TODO: Render the car.
 		//       * Remember: the car position should be the initial position + the accumulated translation. 
 	}
@@ -135,7 +149,7 @@ public class NeedForSpeed implements GLEventListener {
 
 		gl.glEnable(GL2.GL_NORMALIZE);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-		gl.glEnable(GL2.GL_LIGHTING);
+//		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_SMOOTH);
 
 		car.init(gl);
@@ -147,6 +161,15 @@ public class NeedForSpeed implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		// TODO Setup the projection matrix here.
 		//		- It is recommended to use gluPerspective - with fovy 57.0
+
+
+		//TODO:This is a Direct Copy
+		GL2 gl = drawable.getGL().getGL2();
+		GLU glu = new GLU();
+		double aspect = (double)width / (double)height;
+		gl.glMatrixMode(5889);
+		gl.glLoadIdentity();
+		glu.gluPerspective(57.0D, aspect, 2.0D, 500.0D);
 	}
 
 	/**
@@ -169,4 +192,17 @@ public class NeedForSpeed implements GLEventListener {
 		isDayMode = !isDayMode;
 	}
 
+
+
+	//TODO:This is a Direct Copy
+	private void setupSun(GL2 gl, int light) {
+		float[] sunColor = new float[]{1.0F, 1.0F, 1.0F, 1.0F};
+		Vec dir = (new Vec(0.0D, 1.0D, 1.0D)).normalize();
+		float[] pos = new float[]{dir.x, dir.y, dir.z, 0.0F};
+		gl.glLightfv(light, 4610, sunColor, 0);
+		gl.glLightfv(light, 4609, sunColor, 0);
+		gl.glLightfv(light, 4611, pos, 0);
+		gl.glLightfv(light, 4608, new float[]{0.1F, 0.1F, 0.1F, 1.0F}, 0);
+		gl.glEnable(light);
+	}
 }

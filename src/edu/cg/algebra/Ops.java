@@ -61,8 +61,12 @@ public class Ops {
 	public static float distSqr(Point p1, Point p2) {
 		return lengthSqr(sub(p1, p2));
 	}
-	
+
+
 	public static Vec normalize(Vec v) {
+//		avoid division by zero
+		if(norm(v)==0)
+			return v;
 		return mult(1f/norm(v), v);
 	}
 	
