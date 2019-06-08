@@ -2,10 +2,12 @@ package edu.cg.models;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.util.texture.Texture;
 import edu.cg.algebra.Point;
 
 public class SkewedBox implements IRenderable {
 	private double length, height1, height2, depth1, depth2;
+	private Texture boxTexture=null;
 
 	public SkewedBox() {
 		length = .1;
@@ -83,8 +85,11 @@ public class SkewedBox implements IRenderable {
 		gl.glEnd();
 
 	}
+	public SkewedBox(double allDimensions, boolean useTexture ) {//TODO: Write this method YOtam }
+	}
 	@Override
-	public void destroy(GL2 gl) {//TODO:write this shit}
+	public void destroy(GL2 gl) {
+		this.boxTexture.destroy(gl);
 	}
 	@Override
 	public void init(GL2 gl) {

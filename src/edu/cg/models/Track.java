@@ -1,6 +1,7 @@
 package edu.cg.models;
 
 import com.jogamp.opengl.GL2;
+import edu.cg.models.Car.Specification;
 
 public class Track implements IRenderable {
 	private TrackSegment currentTrackSegment = null;
@@ -18,6 +19,11 @@ public class Track implements IRenderable {
 	@Override
 	public void render(GL2 gl) {
 		// TODO: Render the track by rendering the current and next segment.
+		gl.glPushMatrix();
+		this.currentTrackSegment.render(gl);
+		gl.glTranslated(0,0,-Specification.TRACK_SEGMENT_LENGTH);
+		this.nextTrackSegment.render(gl);
+		gl.glPopMatrix();
 	}
 
 	@Override
