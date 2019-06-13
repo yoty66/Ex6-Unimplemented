@@ -10,6 +10,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 import edu.cg.algebra.Vec;
 import edu.cg.models.Car.Wheel;
+import edu.cg.models.SkewedBox;
 import edu.cg.models.Track;
 import edu.cg.models.TrackSegment;
 import edu.cg.models.Car.F1Car;
@@ -112,8 +113,9 @@ public class NeedForSpeed implements GLEventListener {
 		gl.glRotated(-carRotation, 0.0D, 1.0D, 0.0D);
 		gl.glRotated(90.0D, 0.0D, 0.1D, 0.0D);
 		gl.glScaled(4.0D, 4.0D, 4.0D);
-		this.car.render(gl);
+//		this.car.render(gl);
 //		new Wheel().render(gl);
+		new SkewedBox().render(gl);
 		gl.glPopMatrix();
 		// TODO: Render the car.
 		//       * Remember: the car position should be the initial position + the accumulated translation. 
@@ -149,7 +151,7 @@ public class NeedForSpeed implements GLEventListener {
 
 		gl.glEnable(GL2.GL_NORMALIZE);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
-//		gl.glEnable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_SMOOTH);
 
 		car.init(gl);

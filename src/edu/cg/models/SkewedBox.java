@@ -4,6 +4,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.util.texture.Texture;
 import edu.cg.algebra.Point;
+import edu.cg.algebra.Vec;
+import edu.cg.models.Car.Materials;
 
 public class SkewedBox implements IRenderable {
 	private double length, height1, height2, depth1, depth2;
@@ -28,7 +30,7 @@ public class SkewedBox implements IRenderable {
 
 	@Override
 	public void render(GL2 gl) {
-		// TODO : Render the skewed-box using. 
+		// TODO : Render the skewed-box using.
 		//        Use the fields: length, height1, height2, depth1, depth2
 
 
@@ -52,37 +54,84 @@ public class SkewedBox implements IRenderable {
 		gl.glBegin(GL2.GL_QUADS);
 
 		gl.glEnable(GL2.GL_NORMALIZE);
+		Materials.SetRedMetalMaterial(gl);
 
 
 		//Front view x-axis:
-        gl.glVertex3d(p4[0],p4[1],p4[2]);//p4
+//		normal to box
+		Vec v1 = new Vec(p4[0],p4[1],p4[2]);
+		Vec v2 = new Vec(p1[0],p1[1],p1[2]);
+		Vec v3 = new Vec(p2[0],p2[1],p2[2]);
+		Vec v1Neg = v1.mult(-1);
+		Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+
+		gl.glNormal3d(normal.x, normal.y, normal.z);
+
+		gl.glVertex3d(p4[0],p4[1],p4[2]);//p4
         gl.glVertex3d(p1[0],p1[1],p1[2]);//p1
         gl.glVertex3d(p2[0],p2[1],p2[2]);//p2
         gl.glVertex3d(p3[0],p3[1],p3[2]);//p3
+
+		//		normal to box
+		v1 = new Vec(p5[0],p5[1],p5[2]);
+		v2 = new Vec(p8[0],p8[1],p8[2]);
+		v3 = new Vec(p7[0],p7[1],p7[2]);
+		v1Neg = v1.mult(-1);
+		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+		gl.glNormal3d(normal.x, normal.y, normal.z);
 
 		gl.glVertex3d(p5[0],p5[1],p5[2]);
 		gl.glVertex3d(p8[0],p8[1],p8[2]);
 		gl.glVertex3d(p7[0],p7[1],p7[2]);
 		gl.glVertex3d(p6[0],p6[1],p6[2]);
 
-
+		v1 = new Vec(p8[0],p8[1],p8[2]);
+		v2 = new Vec(p5[0],p5[1],p5[2]);
+		v3 = new Vec(p1[0],p1[1],p1[2]);
+		v1Neg = v1.mult(-1);
+		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+		gl.glNormal3d(normal.x, normal.y, normal.z);
 		//Top view y-axis:
 		gl.glVertex3d(p8[0],p8[1],p8[2]);
 		gl.glVertex3d(p5[0],p5[1],p5[2]);
 		gl.glVertex3d(p1[0],p1[1], p1[2]);
 		gl.glVertex3d(p4[0],p4[1],p4[2]);
 
+		v1 = new Vec(p7[0],p7[1],p7[2]);
+		v2 = new Vec(p3[0],p3[1],p3[2]);
+		v3 = new Vec(p2[0],p2[1],p2[2]);
+		v1Neg = v1.mult(-1);
+		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+		gl.glNormal3d(normal.x, normal.y, normal.z);
+
 		gl.glVertex3d(p7[0],p7[1],p7[2]);
 		gl.glVertex3d(p3[0],p3[1],p3[2]);
 		gl.glVertex3d(p2[0],p2[1],p2[2]);
 		gl.glVertex3d(p6[0],p6[1],p6[2]);
 
+
+
+		v1 = new Vec(p5[0],p5[1],p5[2]);
+		v2 = new Vec(p6[0],p6[1],p6[2]);
+		v3 = new Vec(p2[0],p2[1],p2[2]);
+		v1Neg = v1.mult(-1);
+		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+
+		gl.glNormal3d(normal.x, normal.y, normal.z);
 		//Side view z-axis:
 		gl.glVertex3d(p5[0],p5[1],p5[2]);
 		gl.glVertex3d(p6[0],p6[1],p6[2]);
 		gl.glVertex3d(p2[0],p2[1],p2[2]);
 		gl.glVertex3d(p1[0],p1[1],p1[2]);
 
+
+		v1 = new Vec(p7[0],p7[1],p7[2]);
+		v2 = new Vec(p8[0],p8[1],p8[2]);
+		v3 = new Vec(p4[0],p4[1],p4[2]);
+		v1Neg = v1.mult(-1);
+		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+
+		gl.glNormal3d(normal.x, normal.y, normal.z);
 		gl.glVertex3d(p7[0],p7[1],p7[2]);
 		gl.glVertex3d(p8[0],p8[1],p8[2]);
 		gl.glVertex3d(p4[0],p4[1],p4[2]);
@@ -100,7 +149,7 @@ public class SkewedBox implements IRenderable {
 	@Override
 	public void init(GL2 gl) {
 	}
-	
+
 	@Override
 	public String toString() {
 		return "SkewedBox";
