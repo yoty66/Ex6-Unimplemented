@@ -82,6 +82,11 @@ public class NeedForSpeed implements GLEventListener {
 
 	private void setupCamera(GL2 gl) {
 		// TODO: Setup the camera.
+//TODO:This is a Direct Copy
+
+			GLU glu = new GLU();
+			glu.gluLookAt(0.0D + (double)this.carCameraTranslation.x, 1.8D + (double)this.carCameraTranslation.y, 2.0D + (double)this.carCameraTranslation.z, 0.0D + (double)this.carCameraTranslation.x, 1.5D + (double)this.carCameraTranslation.y, -5.0D + (double)this.carCameraTranslation.z, 0.0D, 0.7D, -0.3D);
+
 	}
 
 
@@ -109,14 +114,19 @@ public class NeedForSpeed implements GLEventListener {
 		//TODO:This is a Direct Copy
 		double carRotation = this.gameState.getCarRotation();
 		gl.glPushMatrix();
-		gl.glTranslated(0.0D + (double)this.carCameraTranslation.x, 0.15D + (double)this.carCameraTranslation.y, -6.6D + (double)this.carCameraTranslation.z);
+//		gl.glTranslated(0.0D + (double)this.carCameraTranslation.x, 0.15D + (double)this.carCameraTranslation.y, -6.6D + (double)this.carCameraTranslation.z);
+
 		gl.glRotated(-carRotation, 0.0D, 1.0D, 0.0D);
 		gl.glRotated(90.0D, 0.0D, 0.1D, 0.0D);
 		gl.glScaled(4.0D, 4.0D, 4.0D);
-//		gl.glRotated(90.0D, 0.0D, 1.0D, 0.0D);
+
+
+		gl.glPushMatrix();
+		gl.glTranslated(Specification.C_BASE_DEPTH,0,0);
 		this.car.render(gl);
-//		new Wheel().render(gl);
-//		new SkewedBox().render(gl);
+		gl.glPopMatrix();
+
+
 		gl.glPopMatrix();
 		// TODO: Render the car.
 		//       * Remember: the car position should be the initial position + the accumulated translation. 
@@ -172,7 +182,7 @@ public class NeedForSpeed implements GLEventListener {
 		double aspect = (double)width / (double)height;
 		gl.glMatrixMode(5889);
 		gl.glLoadIdentity();
-		glu.gluPerspective(57.0D, aspect, 2.0D, 500.0D);
+		glu.gluPerspective(55.0D, aspect, 2.0D, 500.0D);
 	}
 
 	/**
