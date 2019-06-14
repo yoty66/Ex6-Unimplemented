@@ -111,25 +111,26 @@ public class NeedForSpeed implements GLEventListener {
 	}
 
 	private void renderCar(GL2 gl) {
-		//TODO:This is a Direct Copy
-		double carRotation = this.gameState.getCarRotation();
+
+		// TODO: Render the car.
+		//       * Remember: the car position should be the initial position + the accumulated translation.
 		gl.glPushMatrix();
-//		gl.glTranslated(0.0D + (double)this.carCameraTranslation.x, 0.15D + (double)this.carCameraTranslation.y, -6.6D + (double)this.carCameraTranslation.z);
+		gl.glTranslated(carCameraTranslation.x,carCameraTranslation.y, carCameraTranslation.z);
+		gl.glTranslated(0,0,-5.7);
 
-		gl.glRotated(-carRotation, 0.0D, 1.0D, 0.0D);
-		gl.glRotated(90.0D, 0.0D, 0.1D, 0.0D);
-		gl.glScaled(4.0D, 4.0D, 4.0D);
+		//turns
+		double carRotation = gameState.getCarRotation();
+		gl.glRotated(-carRotation, 0, 1, 0);
 
+		//The original car EX5 was on the side
+		gl.glRotated(90, 0, 1, 0);
 
+		gl.glScaled(3.5, 3.5, 3.5);
 		gl.glPushMatrix();
 		gl.glTranslated(Specification.C_BASE_DEPTH,0,0);
 		this.car.render(gl);
 		gl.glPopMatrix();
-
-
 		gl.glPopMatrix();
-		// TODO: Render the car.
-		//       * Remember: the car position should be the initial position + the accumulated translation. 
 	}
 
 	public GameState getGameState() {
