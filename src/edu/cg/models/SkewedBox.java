@@ -54,7 +54,6 @@ public class SkewedBox implements IRenderable {
 		gl.glBegin(GL2.GL_QUADS);
 
 		gl.glEnable(GL2.GL_NORMALIZE);
-		Materials.SetRedMetalMaterial(gl);
 
 
 		//Front view x-axis:
