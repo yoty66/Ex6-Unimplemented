@@ -3,6 +3,7 @@ package edu.cg.models;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.ServerError;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.jogamp.opengl.GL2;
@@ -29,6 +30,8 @@ public class TrackSegment implements IRenderable {
 	//      - Add grass and asphalt textures.
 	private Texture AsphaltTexture;
 	private Texture GrassTexture;
+	private Texture texRoad;
+	private Texture texGrass;
 
 	public void setDifficulty(double difficulty) {
 		// TODO: Set the difficulty of the track segment. Here you decide what are the boxes locations.
@@ -67,37 +70,132 @@ public class TrackSegment implements IRenderable {
 		}
 	}
 
-	public TrackSegment(double difficulty) {
-		// TODO initialize your fields here.
-		// Here by setting up the difficulty, we decide on the boxes locations.
-		setDifficulty(difficulty);
-		this.box=new SkewedBox(BOX_LENGTH,true);
-	}
+//	public TrackSegment(double difficulty) {
+//		// TODO initialize your fields here.
+//		// Here by setting up the difficulty, we decide on the boxes locations.
+//		setDifficulty(difficulty);
+//		this.box=new SkewedBox(BOX_LENGTH,true);
+//	}
 
-	@Override
-	public void render(GL2 gl) {
-		// TODO: Render the track segment
-	}
+//	@Override
+//	public void render(GL2 gl) {
+//		// TODO: Render the track segment
+//	}
+//
+//
+////	private void render BOxes
+//	@Override
+//	public void init(GL2 gl) {
+//		// TODO: Initialize textures.
+//		try{
+//		this.AsphaltTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
+//		this.GrassTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
+//		}
+//		catch (IOException e)
+//		{
+//			System.err.println("Failed loading textures"+e.getMessage());
+//		}
+//	}
 
 
-//	private void render BOxes
-	@Override
-	public void init(GL2 gl) {
-		// TODO: Initialize textures.
-		try{
-		this.AsphaltTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
-		this.GrassTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
-		}
-		catch (IOException e)
-		{
-			System.err.println("Failed loading textures"+e.getMessage());
-		}
-	}
+
 	public void destroy(GL2 gl) {
 		// TODO: destroy textures.
 		this.AsphaltTexture.destroy(gl);
 		this.GrassTexture.destroy(gl);
 		this.box.destroy(gl);
+	}
+
+
+//JARRRRR
+
+	public TrackSegment(double difficulty) {
+		this.box = new SkewedBox(1.5D, true);
+		this.setDifficulty(difficulty);
+	}
+
+	public void render(GL2 gl) {
+		this.renderBoxes(gl);
+		this.renderAsphalt(gl);
+		this.renderGrass(gl);
+	}
+
+	private void renderBoxes(GL2 gl) {
+		Materials.setWoodenBoxMaterial(gl);
+		Iterator var3 = this.boxesLocations.iterator();
+
+		while(var3.hasNext()) {
+			Point p = (Point)var3.next();
+			gl.glPushMatrix();
+			gl.glTranslated((double)p.x, 0.0D, (double)p.z);
+			this.box.render(gl);
+			gl.glPopMatrix();
+		}
+
+	}
+
+	private void renderAsphalt(GL2 gl) {
+		Materials.setAsphaltMaterial(gl);
+		gl.glPushMatrix();
+		this.renderQuadraticTexture(gl, this.texRoad, 20.0D, 10.0D, 6, 500.0D);
+		gl.glPopMatrix();
+	}
+
+	private void renderGrass(GL2 gl) {
+		Materials.setGreenMaterial(gl);
+		double dx = 15.0D;
+		gl.glTranslated(dx, 0.0D, 0.0D);
+		this.renderQuadraticTexture(gl, this.texGrass, 10.0D, 10.0D, 2, 500.0D);
+		gl.glTranslated(-2.0D * dx, 0.0D, 0.0D);
+		this.renderQuadraticTexture(gl, this.texGrass, 10.0D, 10.0D, 2, 500.0D);
+		gl.glPopMatrix();
+	}
+
+	private void renderQuadraticTexture(GL2 gl, Texture tex, double quadWidth, double quadDepth, int split, double totalDepth) {
+		gl.glEnable(3553);
+		tex.bind(gl);
+		gl.glTexEnvi(8960, 8704, 8448);
+		gl.glTexParameteri(3553, 10241, 9987);
+		gl.glTexParameteri(3553, 10240, 9729);
+		gl.glTexParameteri(3553, 33083, 1);
+		gl.glColor3d(1.0D, 0.0D, 0.0D);
+		GLU glu = new GLU();
+		GLUquadric quad = glu.gluNewQuadric();
+		gl.glColor3d(1.0D, 0.0D, 0.0D);
+		gl.glNormal3d(0.0D, 1.0D, 0.0D);
+		double d = 1.0D / (double)split;
+		double dz = quadDepth / (double)split;
+		double dx = quadWidth / (double)split;
+
+		for(double tz = 0.0D; tz < totalDepth; tz += quadDepth) {
+			for(double i = 0.0D; i < (double)split; ++i) {
+				gl.glBegin(5);
+
+				for(double j = 0.0D; j <= (double)split; ++j) {
+					gl.glTexCoord2d(j * d, (i + 1.0D) * d);
+					gl.glVertex3d(-quadWidth / 2.0D + j * dx, 0.0D, -tz - (i + 1.0D) * dz);
+					gl.glTexCoord2d(j * d, i * d);
+					gl.glVertex3d(-quadWidth / 2.0D + j * dx, 0.0D, -tz - i * dz);
+				}
+
+				gl.glEnd();
+			}
+		}
+
+		glu.gluDeleteQuadric(quad);
+		gl.glDisable(3553);
+	}
+
+	public void init(GL2 gl) {
+		this.box.init(gl);
+
+		try {
+			this.texRoad = TextureIO.newTexture(new File("Textures/RoadTexture.jpg"), true);
+			this.texGrass = TextureIO.newTexture(new File("Textures/GrassTexture.jpg"), true);
+		} catch (Exception var3) {
+			System.err.print("Unable to read texture : " + var3.getMessage());
+		}
+
 	}
 
 
