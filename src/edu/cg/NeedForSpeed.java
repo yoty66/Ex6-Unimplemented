@@ -67,9 +67,12 @@ public class NeedForSpeed implements GLEventListener {
 		// Step (3) setup the lighting.
 		setupLights(gl);
 		// Step (4) render the car.
-		renderCar(gl);
+		SkewedBox box=new SkewedBox(TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,true) ;
+		box.init(gl);
+		box.rendertest(gl);
+//		renderCar(gl);
 		// Step (5) render the track.
-		renderTrack(gl);
+//		renderTrack(gl);
 	}
 
 	private void updateCarCameraTranslation(GL2 gl) {
@@ -96,7 +99,7 @@ public class NeedForSpeed implements GLEventListener {
 			// TODO Setup day lighting.
 			// * Remember: switch-off any light sources that were used in night mode
 			gl.glDisable(16385);
-			this.setupSun(gl, 16384);
+			this.setupSun(gl, 16385);
 		} else {
 			// TODO Setup night lighting.
 			// * Remember: switch-off any light sources that are used in day mode

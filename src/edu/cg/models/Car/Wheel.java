@@ -15,6 +15,8 @@ public class Wheel implements IRenderable {
 	public void render(GL2 gl) {
 		// The wheel should be in the center relative to its local coordinate system.
 //
+
+		gl.glEnable(GL2.GL_NORMALIZE);
 		Materials.setMaterialTire(gl);
 		GLU glu=new GLU();
 		GLUquadric q=glu.gluNewQuadric();
