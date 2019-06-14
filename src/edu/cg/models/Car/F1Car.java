@@ -19,23 +19,33 @@ public class F1Car implements IRenderable {
 	@Override
 	public void render(GL2 gl) {
 		// TODO: Render the whole car. 
-		//       Here You should only render the three parts: back, center and front.
-		gl.glPushMatrix();
-//		render center
-		this.center.render(gl);
-//		allign front to end of center
+//		//       Here You should only render the three parts: back, center and front.
+//		gl.glPushMatrix();
+////		render center
+//		this.center.render(gl);
+////		allign front to end of center
+//
+//		double distance = Specification.C_BASE_LENGTH/2 + Specification.F_HOOD_LENGTH_1/2;
+//		gl.glTranslated(distance,0,0);
+//		this.front.render(gl);
+//		gl.glPopMatrix();
+//
+////		allign back to end of center
+//
+//		gl.glPushMatrix();
+//		distance =Specification.C_BASE_LENGTH/2 + Specification.B_LENGTH;
+//		gl.glTranslated(-distance,0,0);
+//		this.back.render(gl);
+//		gl.glPopMatrix();
 
-		double distance = Specification.C_BASE_LENGTH/2 + Specification.F_HOOD_LENGTH_1/2;
-		gl.glTranslated(distance,0,0);
-		this.front.render(gl);
+		(new Center()).render(gl);
+		gl.glPushMatrix();
+		gl.glTranslated(-0.3875D, 0.0D, 0.0D);
+		(new Back()).render(gl);
 		gl.glPopMatrix();
-
-//		allign back to end of center
-
 		gl.glPushMatrix();
-		distance =Specification.C_BASE_LENGTH/2 + Specification.B_LENGTH;
-		gl.glTranslated(-distance,0,0);
-		this.back.render(gl);
+		gl.glTranslated(0.425D, 0.0D, 0.0D);
+		(new Front()).render(gl);
 		gl.glPopMatrix();
 
 	}

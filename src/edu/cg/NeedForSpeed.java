@@ -113,9 +113,10 @@ public class NeedForSpeed implements GLEventListener {
 		gl.glRotated(-carRotation, 0.0D, 1.0D, 0.0D);
 		gl.glRotated(90.0D, 0.0D, 0.1D, 0.0D);
 		gl.glScaled(4.0D, 4.0D, 4.0D);
-//		this.car.render(gl);
+//		gl.glRotated(90.0D, 0.0D, 1.0D, 0.0D);
+		this.car.render(gl);
 //		new Wheel().render(gl);
-		new SkewedBox().render(gl);
+//		new SkewedBox().render(gl);
 		gl.glPopMatrix();
 		// TODO: Render the car.
 		//       * Remember: the car position should be the initial position + the accumulated translation. 
