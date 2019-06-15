@@ -12,6 +12,7 @@ import edu.cg.models.IRenderable;
 import java.io.File;
 
 import static com.jogamp.opengl.GL.*;
+import static edu.cg.models.Car.Materials.setWoodenBoxMaterial;
 
 public class SkewedBox implements IRenderable {
 	private double length, height1, height2, depth1, depth2;
@@ -40,13 +41,6 @@ public class SkewedBox implements IRenderable {
 		this.paintWithTexture=paintWithTexture;
 	}
 
-	public void rendertest(GL2 gl)
-	{
-		gl.glPushMatrix();
-		gl.glTranslated(0,TrackSegment.BOX_LENGTH,-TrackSegment.BOX_LENGTH);
-		this.render(gl);
-		gl.glPopMatrix();
-	}
 
 
 	@Override
@@ -56,12 +50,14 @@ public class SkewedBox implements IRenderable {
 		if (paintWithTexture)
 		{
 			gl.glEnable(GL_TEXTURE_2D);
+
 			this.init(gl);
 			this.boxTexture.bind(gl);
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 
 		}
+
 		renderGeometry(gl);
 
 		if (paintWithTexture)
@@ -107,10 +103,10 @@ public class SkewedBox implements IRenderable {
 		gl.glTexCoord2d(0.0D, 0.0D);
 
 		gl.glVertex3d(p1[0],p1[1],p1[2]);//p1
-		gl.glTexCoord2d(1.0D, 1.0D);
+		gl.glTexCoord2d(0.0D, 1.0D);
 
 		gl.glVertex3d(p2[0],p2[1],p2[2]);//p2
-		gl.glTexCoord2d(0.0D, 1.0D);
+		gl.glTexCoord2d(1.0D, 1.0D);
 
 		gl.glVertex3d(p3[0],p3[1],p3[2]);//p3
 		gl.glTexCoord2d(1.0D, 0.0D);

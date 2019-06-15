@@ -67,12 +67,20 @@ public class NeedForSpeed implements GLEventListener {
 		// Step (3) setup the lighting.
 		setupLights(gl);
 		// Step (4) render the car.
-		SkewedBox box=new SkewedBox(TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,true) ;
-		box.init(gl);
-		box.rendertest(gl);
+
 //		renderCar(gl);
 		// Step (5) render the track.
 //		renderTrack(gl);
+
+		//test
+//		SkewedBox box=new SkewedBox(TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,true) ;
+//		box.init(gl);
+//		box.test(gl);
+
+		TrackSegment segment=new TrackSegment(0.05);
+		segment.init(gl);
+		segment.testRenderQuadraticTexture(gl);
+
 	}
 
 	private void updateCarCameraTranslation(GL2 gl) {
