@@ -163,10 +163,10 @@ public class NeedForSpeed implements GLEventListener {
 	}
 
 	private void renderTrack(GL2 gl) {
-//		simply render the track
-//		gl.glPushMatrix();
-//		this.gameTrack.render(gl);
-//		gl.glPopMatrix();
+		simply render the track
+		gl.glPushMatrix();
+		this.gameTrack.render(gl);
+		gl.glPopMatrix();
 
 
 	}
