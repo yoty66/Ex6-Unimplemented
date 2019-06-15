@@ -163,6 +163,10 @@ public class TrackSegment implements IRenderable {
 		GLUquadric quad = glu.gluNewQuadric();
 		gl.glColor3d(1.0D, 0.0D, 0.0D);
 		gl.glNormal3d(0.0D, 1.0D, 0.0D);
+
+
+
+
 		double d = 1.0D / (double)split;
 		double dz = quadDepth / (double)split;
 		double dx = quadWidth / (double)split;
