@@ -33,8 +33,6 @@ public class NeedForSpeed implements GLEventListener {
 	// TODO: add fields as you want. For example:
 	// - Car initial position (should be fixed).
 	// - Camera initial position (should be fixed)
-	private TrackSegment test=null;
-
 
 	public NeedForSpeed(Component glPanel) {
 		this.glPanel = glPanel;
@@ -69,62 +67,113 @@ public class NeedForSpeed implements GLEventListener {
 		// Step (3) setup the lighting.
 		setupLights(gl);
 		// Step (4) render the car.
-
 		renderCar(gl);
 		// Step (5) render the track.
 		renderTrack(gl);
-
-		//test//
-//		SkewedBox box=new SkewedBox(TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,true) ;
-//		box.init(gl);
-//		box.test(gl);
-//		if(test==null)
-//		 test=new TrackSegment(0.05);
-//		test.init(gl);
-//		test.render(gl);
-//		segment.testRenderQuadraticTexture(gl);
-
 	}
 
 	private void updateCarCameraTranslation(GL2 gl) {
-		// TODO: Update the car and camera translation values (not the
-		// ModelView-Matrix).
-		// - You should always keep track on the car offset relative to the starting
-		// point.
-		// - You should change the track segments here.
+
+		double roadBound = TrackSegment.ASPHALT_TEXTURE_WIDTH/2.0;
+		Vec distance = this.gameState.getNextTranslation();
+//		avoid car getting out of the segment
+		if(distance.x + this.carCameraTranslation.x > 10f)
+			distance.x = 10.0f - this.carCameraTranslation.x;
+		if(distance.x + this.carCameraTranslation.x < -10f)
+			distance.x = -10.0f + this.carCameraTranslation.x;
+		this.carCameraTranslation.add(distance);
+//		check if we moved to next trackSegment
+		if(carCameraTranslation.z < -500){
+			carCameraTranslation.z+=500;
+			this.gameTrack.changeTrack(gl);
+		}
+
+
+//JARRRRRRR
+//		Vec ret = this.gameState.getNextTranslation();
+//		this.carCameraTranslation = this.carCameraTranslation.add(ret);
+//		double dx = Math.max((double)this.carCameraTranslation.x, -7.0D);
+//		this.carCameraTranslation.x = (float)Math.min(dx, 7.0D);
+//		if ((double)Math.abs(this.carCameraTranslation.z) >= 510.0D) {
+//			this.carCameraTranslation.z = -((float)((double)Math.abs(this.carCameraTranslation.z) % 500.0D));
+//			this.gameTrack.changeTrack(gl);
+//		}
 	}
 
 	private void setupCamera(GL2 gl) {
-		// TODO: Setup the camera.
-//TODO:This is a Direct Copy
+		double[] eyeCenter = {this.carCameraTranslation.x, 3 + this.carCameraTranslation.y, this.carCameraTranslation.z +3};
+		double[] referencePoint = {this.carCameraTranslation.x, 2 + (double)this.carCameraTranslation.y, -10 + (double)this.carCameraTranslation.z};
+		GLU glu = new GLU();
+		glu.gluLookAt(eyeCenter[0], eyeCenter[1], eyeCenter[2],referencePoint[0], referencePoint[1], referencePoint[2], 0, 0.5, -2);
 
-			GLU glu = new GLU();
-			glu.gluLookAt(0.0D + (double)this.carCameraTranslation.x, 1.8D + (double)this.carCameraTranslation.y, 2.0D + (double)this.carCameraTranslation.z, 0.0D + (double)this.carCameraTranslation.x, 1.5D + (double)this.carCameraTranslation.y, -5.0D + (double)this.carCameraTranslation.z, 0.0D, 0.7D, -0.3D);
+	}
+
+	private void addSpotlight(GL2 gl, int light, float[] position, float[] lightColor, float[] lightDirection) {
+
+		gl.glLightfv(light, GL2.GL_POSITION, position, 0);
+		gl.glLightf(light,GL2.GL_SPOT_CUTOFF,60);
+		gl.glLightfv(light, GL2.GL_SPOT_DIRECTION, lightDirection, 0);
+		gl.glLightfv(light, GL2.GL_SPECULAR, lightColor, 0);
+		gl.glLightfv(light, GL2.GL_DIFFUSE, lightColor, 0);
+		gl.glLightf(light, GL2.GL_SPOT_EXPONENT, 0.3f);
+		gl.glEnable(light);
 
 	}
 
 
 	private void setupLights(GL2 gl) {
-		//TODO:This is a Direct Copy
+		gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE,GL2.GL_TRUE);
 		if (isDayMode) {
-			// TODO Setup day lighting.
-			// * Remember: switch-off any light sources that were used in night mode
-			gl.glDisable(16385);
-			this.setupSun(gl, 16385);
-		} else {
-			// TODO Setup night lighting.
-			// * Remember: switch-off any light sources that are used in day mode
+
+//			disable night lights and moon light
+			gl.glDisable(GL2.GL_LIGHT1);
+			gl.glDisable(GL2.GL_LIGHT2);
+			gl.glDisable(GL2.GL_LIGHT3);
+			int dayLight = GL2.GL_LIGHT0;
+//			position
+			gl.glLightfv(dayLight, 4611, new float[]{0,1,1}, 0);
+
+//			default properties of LIGHT0 fits a sun light
+			gl.glEnable(dayLight);
+		}
+		else {
+
+//			disable sun light
+			gl.glDisable(GL2.GL_LIGHT0);
 			// * Remember: spotlight sources also move with the camera.
+			int nightLight1 = GL2.GL_LIGHT1;
+			int nightLight2 = GL2.GL_LIGHT2;
+			int moonLight = GL2.GL_LIGHT3;
+//add low ambient light from moon
+			float[] ambientLight = { 0.3f, 0.3f, 0.3f,0f };  // weak ambient light
+			gl.glLightfv(moonLight, GL2.GL_AMBIENT, ambientLight, 0);
+			gl.glEnable(moonLight);
+//			add two spotlight from both sides of the car
+			float[] light1Position = {5 + this.carCameraTranslation.x, 10 + this.carCameraTranslation.y,10 + this.carCameraTranslation.z,1};
+			float[] spotLightColor = {0.85F, 0.85F, 0.85F, 1.0F};
+			float[] spotLightDirection = {0.0F, -1.0F, 0.0F};
+			this.addSpotlight(gl, nightLight1, light1Position,spotLightColor,spotLightDirection );
+			float[] light2Position = {this.carCameraTranslation.x - 5, 10 + this.carCameraTranslation.y,this.carCameraTranslation.z -5, 1};
+			this.addSpotlight(gl, nightLight2, light2Position, spotLightColor,spotLightDirection);
+
+
+
 		}
 
 	}
 
+
+	//TODO:write our own
 	private void renderTrack(GL2 gl) {
 		// TODO: Render the track. 
-		//       * Note: the track shouldn't be translated. It should be fixed.
+        //       * Note: the track shouldn't be translated. It should be fixed.
+
+
+//		simply render the track
 		gl.glPushMatrix();
 		this.gameTrack.render(gl);
 		gl.glPopMatrix();
+
 
 	}
 
@@ -178,7 +227,6 @@ public class NeedForSpeed implements GLEventListener {
 		//		 Remember to change OpenGL mode as it was before.
 		gl.glCullFace(GL2.GL_BACK);
 		gl.glEnable(GL2.GL_CULL_FACE);
-
 		gl.glEnable(GL2.GL_NORMALIZE);
 		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glEnable(GL2.GL_LIGHTING);
@@ -198,10 +246,11 @@ public class NeedForSpeed implements GLEventListener {
 		//TODO:This is a Direct Copy
 		GL2 gl = drawable.getGL().getGL2();
 		GLU glu = new GLU();
-		double aspect = (double)width / (double)height;
-		gl.glMatrixMode(5889);
+		double ratio = (double)width/ height;
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+
 		gl.glLoadIdentity();
-		glu.gluPerspective(55.0D, aspect, 2.0D, 500.0D);
+		glu.gluPerspective(57, ratio, 2.0D, 500.0D);
 	}
 
 	/**
@@ -224,17 +273,4 @@ public class NeedForSpeed implements GLEventListener {
 		isDayMode = !isDayMode;
 	}
 
-
-
-	//TODO:This is a Direct Copy
-	private void setupSun(GL2 gl, int light) {
-		float[] sunColor = new float[]{1.0F, 1.0F, 1.0F, 1.0F};
-		Vec dir = (new Vec(0.0D, 1.0D, 1.0D)).normalize();
-		float[] pos = new float[]{dir.x, dir.y, dir.z, 0.0F};
-		gl.glLightfv(light, 4610, sunColor, 0);
-		gl.glLightfv(light, 4609, sunColor, 0);
-		gl.glLightfv(light, 4611, pos, 0);
-		gl.glLightfv(light, 4608, new float[]{0.1F, 0.1F, 0.1F, 1.0F}, 0);
-		gl.glEnable(light);
-	}
 }

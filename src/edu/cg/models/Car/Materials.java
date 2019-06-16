@@ -28,7 +28,7 @@ public class Materials {
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, DARK_RED, 0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 10f);
 	}
-
+	
 	public static void SetDarkGreyMetalMaterial(GL2 gl) {
 		gl.glMaterialfv(GL2.GL_FRONT_AND_BACK, GL2.GL_DIFFUSE, DARK_GRAY, 0);
 		gl.glMaterialf(GL2.GL_FRONT_AND_BACK, GL2.GL_SHININESS, 10f);
@@ -47,6 +47,9 @@ public class Materials {
 	}
 
 
+//JAR DELETE LATER
+
+//TODO: write ourown
 	public static void setGreenMaterial(GL2 gl) {
 		float[] mat_ambient = new float[]{0.0215F, 0.1745F, 0.0215F, 1.0F};
 		float[] mat_diffuse = new float[]{0.07568F, 0.61424F, 0.07568F, 1.0F};
@@ -79,7 +82,5 @@ public class Materials {
 		gl.glMaterialfv(1028, 4609, mat_diffuse, 0);
 		gl.glMaterialfv(1028, 4610, mat_specular, 0);
 	}
-
-
 
 }
