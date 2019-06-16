@@ -61,7 +61,7 @@ public class NeedForSpeed implements GLEventListener {
 		// TODO: This is the flow in which we render the scene. You can use different flow.
 		// Step (1) You should update the accumulated translation that needs to be
 		// applied on the car, camera and light sources.
-//		updateCarCameraTranslation(gl);
+		updateCarCameraTranslation(gl);
 		// Step (2) Position the camera and setup its orientation
 		setupCamera(gl);
 		// Step (3) setup the lighting.

@@ -36,7 +36,12 @@ public class TrackSegment implements IRenderable {
 	//      - Add grass and asphalt textures.
 	private Texture AsphaltTexture;
 	private Texture GrassTexture;
+
 	private boolean isSetDifficulty=false;
+
+	private Texture texRoad;
+	private Texture texGrass;
+
 
 	public void setDifficulty(double difficulty) {
 		// TODO: Set the difficulty of the track segment. Here you decide what are the boxes locations.
@@ -79,15 +84,58 @@ public class TrackSegment implements IRenderable {
 		}
 //	}
 
+//	public TrackSegment(double difficulty) {
+//		// TODO initialize your fields here.
+//		// Here by setting up the difficulty, we decide on the boxes locations.
+//		setDifficulty(difficulty);
+//		this.box=new SkewedBox(BOX_LENGTH,true);
+//	}
+
+//	@Override
+//	public void render(GL2 gl) {
+//		// TODO: Render the track segment
+//	}
+//
+//
+////	private void render BOxes
+	@Override
+	public void init(GL2 gl) {
+		// TODO: Initialize textures.
+		try{
+		this.AsphaltTexture=TextureIO.newTexture(new File("Textures/RoadTexture.jpg"),true);
+		this.GrassTexture=TextureIO.newTexture(new File("Textures/GrassTexture.jpg"),true);
+		}
+		catch (IOException e)
+		{
+			System.err.println("Failed loading textures"+e.getMessage());
+		}
+	}
+
+
+
+	public void destroy(GL2 gl) {
+		// TODO: destroy textures.
+		this.AsphaltTexture.destroy(gl);
+		this.GrassTexture.destroy(gl);
+		this.box.destroy(gl);
+	}
+
+
+//JARRRRR
+
 	public TrackSegment(double difficulty) {
+
 		// TODO initialize your fields here.
 		// Here by setting up the difficulty, we decide on the boxes locations.
 		setDifficulty(difficulty);
 		this.box = new SkewedBox(BOX_LENGTH, true);
+
+
+
 	}
 
-	@Override
 	public void render(GL2 gl) {
+
 	    this.box.init(gl);
 		// TODO: Render the track segment
 //		gl.glPushMatrix();
@@ -110,7 +158,7 @@ public class TrackSegment implements IRenderable {
         box.render(gl);
         gl.glPopMatrix();
         }
-
+//
     }
 	private void renderGrass(GL2 gl)
 	{
@@ -129,7 +177,7 @@ public class TrackSegment implements IRenderable {
 		destroyTextureParams(gl);
 		gl.glPopMatrix();
 	}
-
+//
 	private void renderRoad(GL2 gl)
 	{
 		gl.glPushMatrix();
@@ -142,26 +190,6 @@ public class TrackSegment implements IRenderable {
 
 	}
 
-
-
-	//	private void render BOxes
-	@Override
-	public void init(GL2 gl) {
-		// TODO: Initialize textures.
-		try {
-			this.AsphaltTexture = TextureIO.newTexture(new File("Textures/RoadTexture.jpg"), true);
-			this.GrassTexture = TextureIO.newTexture(new File("Textures/GrassTexture.jpg"), true);
-		} catch (IOException e) {
-			System.err.println("Failed loading textures" + e.getMessage());
-		}
-	}
-
-	public void destroy(GL2 gl) {
-		// TODO: destroy textures.
-		this.AsphaltTexture.destroy(gl);
-		this.GrassTexture.destroy(gl);
-		this.box.destroy(gl);
-	}
 
 	private void setTextureParams(GL2 gl, Texture tex){
 
