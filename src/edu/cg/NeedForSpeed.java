@@ -79,7 +79,8 @@ public class NeedForSpeed implements GLEventListener {
 
 		TrackSegment segment=new TrackSegment(0.05);
 		segment.init(gl);
-		segment.testRenderQuadraticTexture(gl);
+		segment.render(gl);
+//		segment.testRenderQuadraticTexture(gl);
 
 	}
 
