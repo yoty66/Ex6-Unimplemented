@@ -24,7 +24,7 @@ public class NeedForSpeed implements GLEventListener {
 	private GameState gameState = null; // Tracks the car movement and orientation
 	private F1Car car = null; // The F1 car we want to render
 	private Vec carCameraTranslation = null; // The accumulated translation that should be applied on the car, camera
-												// and light sources
+	// and light sources
 	private Track gameTrack = null; // The game track we want to render
 	private FPSAnimator ani; // This object is responsible to redraw the model with a constant FPS
 	private Component glPanel; // The canvas we draw on.
@@ -67,21 +67,23 @@ public class NeedForSpeed implements GLEventListener {
 		// Step (3) setup the lighting.
 		setupLights(gl);
 		// Step (4) render the car.
+
 		renderCar(gl);
 		// Step (5) render the track.
 		renderTrack(gl);
+
 	}
 
 	private void updateCarCameraTranslation(GL2 gl) {
 
-		double roadBound = TrackSegment.ASPHALT_TEXTURE_WIDTH/2.0;
+		double roadBound = (TrackSegment.ASPHALT_TEXTURE_WIDTH -4)/2.0;
 		Vec distance = this.gameState.getNextTranslation();
 //		avoid car getting out of the segment
-		if(distance.x + this.carCameraTranslation.x > 10f)
-			distance.x = 10.0f - this.carCameraTranslation.x;
-		if(distance.x + this.carCameraTranslation.x < -10f)
-			distance.x = -10.0f + this.carCameraTranslation.x;
-		this.carCameraTranslation.add(distance);
+		if(distance.x + this.carCameraTranslation.x > roadBound)
+			distance.x = (float)roadBound - this.carCameraTranslation.x;
+		if(distance.x + this.carCameraTranslation.x < -roadBound)
+			distance.x = -(float)roadBound - this.carCameraTranslation.x;
+		this.carCameraTranslation = this.carCameraTranslation.add(distance);
 //		check if we moved to next trackSegment
 		if(carCameraTranslation.z < -500){
 			carCameraTranslation.z+=500;
@@ -89,19 +91,10 @@ public class NeedForSpeed implements GLEventListener {
 		}
 
 
-//JARRRRRRR
-//		Vec ret = this.gameState.getNextTranslation();
-//		this.carCameraTranslation = this.carCameraTranslation.add(ret);
-//		double dx = Math.max((double)this.carCameraTranslation.x, -7.0D);
-//		this.carCameraTranslation.x = (float)Math.min(dx, 7.0D);
-//		if ((double)Math.abs(this.carCameraTranslation.z) >= 510.0D) {
-//			this.carCameraTranslation.z = -((float)((double)Math.abs(this.carCameraTranslation.z) % 500.0D));
-//			this.gameTrack.changeTrack(gl);
-//		}
 	}
 
 	private void setupCamera(GL2 gl) {
-		double[] eyeCenter = {this.carCameraTranslation.x, 3 + this.carCameraTranslation.y, this.carCameraTranslation.z +3};
+		double[] eyeCenter = {this.carCameraTranslation.x, 2.2 + this.carCameraTranslation.y, this.carCameraTranslation.z +3};
 		double[] referencePoint = {this.carCameraTranslation.x, 2 + (double)this.carCameraTranslation.y, -10 + (double)this.carCameraTranslation.z};
 		GLU glu = new GLU();
 		glu.gluLookAt(eyeCenter[0], eyeCenter[1], eyeCenter[2],referencePoint[0], referencePoint[1], referencePoint[2], 0, 0.5, -2);
@@ -122,7 +115,6 @@ public class NeedForSpeed implements GLEventListener {
 
 
 	private void setupLights(GL2 gl) {
-		gl.glLightModeli(GL2.GL_LIGHT_MODEL_TWO_SIDE,GL2.GL_TRUE);
 		if (isDayMode) {
 
 //			disable night lights and moon light
@@ -162,13 +154,7 @@ public class NeedForSpeed implements GLEventListener {
 
 	}
 
-
-	//TODO:write our own
 	private void renderTrack(GL2 gl) {
-		// TODO: Render the track. 
-        //       * Note: the track shouldn't be translated. It should be fixed.
-
-
 //		simply render the track
 		gl.glPushMatrix();
 		this.gameTrack.render(gl);
@@ -178,9 +164,6 @@ public class NeedForSpeed implements GLEventListener {
 	}
 
 	private void renderCar(GL2 gl) {
-
-		// TODO: Render the car.
-		//       * Remember: the car position should be the initial position + the accumulated translation.
 		gl.glPushMatrix();
 		gl.glTranslated(carCameraTranslation.x,carCameraTranslation.y, carCameraTranslation.z);
 		gl.glTranslated(0,0,-5.7);
@@ -245,10 +228,9 @@ public class NeedForSpeed implements GLEventListener {
 
 		//TODO:This is a Direct Copy
 		GL2 gl = drawable.getGL().getGL2();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		GLU glu = new GLU();
 		double ratio = (double)width/ height;
-		gl.glMatrixMode(GL2.GL_PROJECTION);
-
 		gl.glLoadIdentity();
 		glu.gluPerspective(57, ratio, 2.0D, 500.0D);
 	}

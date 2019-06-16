@@ -166,7 +166,8 @@ public class TrackSegment implements IRenderable {
 		Materials.setGreenMaterial(gl);
 		gl.glTranslated(ASPHALT_TEXTURE_WIDTH/2,0,0);
 		setTextureParams(gl,this.GrassTexture);
-		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,GRASS_TEXTURE_DEPTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
+		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,2*GRASS_TEXTURE_DEPTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
+//		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,TRACK_LENGTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
 		destroyTextureParams(gl);
 		gl.glPopMatrix();
 
@@ -174,6 +175,7 @@ public class TrackSegment implements IRenderable {
 		gl.glTranslated(-GRASS_TEXTURE_WIDTH-ASPHALT_TEXTURE_WIDTH/2,0,0);
 		setTextureParams(gl,this.GrassTexture);
 		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,GRASS_TEXTURE_DEPTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
+//		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,TRACK_LENGTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
 		destroyTextureParams(gl);
 		gl.glPopMatrix();
 	}
@@ -185,6 +187,7 @@ public class TrackSegment implements IRenderable {
 		gl.glTranslated(-ASPHALT_TEXTURE_WIDTH/2,0,0);
 		setTextureParams(gl,this.AsphaltTexture);
 		renderQuadraticTexture(gl, ASPHALT_TEXTURE_WIDTH,ASPHALT_TEXTURE_DEPTH,ASPHALT_TEXTURE_WIDTH,TRACK_LENGTH);
+//		renderQuadraticTexture(gl, ASPHALT_TEXTURE_WIDTH,TRACK_LENGTH,ASPHALT_TEXTURE_WIDTH,TRACK_LENGTH);
 		destroyTextureParams(gl);
 		gl.glPopMatrix();
 
@@ -277,49 +280,241 @@ public class TrackSegment implements IRenderable {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//	Renders a texture quad on a -z-x-plane . The points are given relative to the x (right left) and the negative -z (top bottom)
-//  Assume the Texture is already defind and binded .
-//	public void renderTextureQuad2(GL2 gl, double[] topLeft, double[] topRight, double[] bottomRight, double[] bottomLeft) {
 //
-////		Vec v1 = new Vec(bottomRight[0],bottomRight[1],bottomRight[2]);
-////		Vec v2 = new Vec(topRight[0],topRight[1],topRight[2]);
-////		Vec v3 = new Vec(topLeft[0],topLeft[1],topLeft[2]);
-////		Vec v1Neg = v1.mult(-1);
-////		Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
 //
-//		gl.glNormal3d(0, 1, 0);
-//		gl.glVertex3d(bottomRight[0], bottomRight[1], bottomRight[2]);
-//		gl.glTexCoord2d(0, 0);
 //
-//		gl.glVertex3d(topRight[0], topRight[1], topRight[2]);
-//		gl.glTexCoord2d(0.0D, 1.0D);
 //
-//		gl.glVertex3d(topLeft[0], topLeft[1], topLeft[2]);
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//		gl.glVertex3d(bottomLeft[0], bottomLeft[1], bottomLeft[2]);
-//		gl.glTexCoord2d(1.0D, 0.0D);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+////	Renders a texture quad on a -z-x-plane . The points are given relative to the x (right left) and the negative -z (top bottom)
+////  Assume the Texture is already defind and binded .
+////	public void renderTextureQuad2(GL2 gl, double[] topLeft, double[] topRight, double[] bottomRight, double[] bottomLeft) {
+////
+//////		Vec v1 = new Vec(bottomRight[0],bottomRight[1],bottomRight[2]);
+//////		Vec v2 = new Vec(topRight[0],topRight[1],topRight[2]);
+//////		Vec v3 = new Vec(topLeft[0],topLeft[1],topLeft[2]);
+//////		Vec v1Neg = v1.mult(-1);
+//////		Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
+////
+////		gl.glNormal3d(0, 1, 0);
+////		gl.glVertex3d(bottomRight[0], bottomRight[1], bottomRight[2]);
+////		gl.glTexCoord2d(0, 0);
+////
+////		gl.glVertex3d(topRight[0], topRight[1], topRight[2]);
+////		gl.glTexCoord2d(0.0D, 1.0D);
+////
+////		gl.glVertex3d(topLeft[0], topLeft[1], topLeft[2]);
+////		gl.glTexCoord2d(1.0D, 1.0D);
+////		gl.glVertex3d(bottomLeft[0], bottomLeft[1], bottomLeft[2]);
+////		gl.glTexCoord2d(1.0D, 0.0D);
+////	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+//
+//package edu.cg.models;
+//
+//import com.jogamp.opengl.GL2;
+//import com.jogamp.opengl.glu.GLU;
+//import com.jogamp.opengl.glu.GLUquadric;
+//import com.jogamp.opengl.util.texture.Texture;
+//import com.jogamp.opengl.util.texture.TextureIO;
+//import edu.cg.algebra.Point;
+//import edu.cg.models.Car.Materials;
+//import java.io.File;
+//import java.util.Iterator;
+//import java.util.LinkedList;
+//
+//public class TrackSegment implements IRenderable {
+//	public static final double ASPHALT_TEXTURE_WIDTH = 20.0D;
+//	public static final double ASPHALT_TEXTURE_DEPTH = 10.0D;
+//	public static final double GRASS_TEXTURE_WIDTH = 10.0D;
+//	public static final double GRASS_TEXTURE_DEPTH = 10.0D;
+//	public static final double TRACK_LENGTH = 500.0D;
+//	public static final double BOX_LENGTH = 1.5D;
+//	private LinkedList<Point> boxesLocations;
+//	private SkewedBox box = null;
+//	private Texture texRoad;
+//	private Texture texGrass;
+//
+//	public void setDifficulty(double difficulty) {
+//		difficulty = Math.min(difficulty, 0.95D);
+//		difficulty = Math.max(difficulty, 0.05D);
+//		double numberOfLanes = 4.0D;
+//		double deltaZ = 0.0D;
+//		if (difficulty < 0.25D) {
+//			deltaZ = 100.0D;
+//		} else if (difficulty < 0.5D) {
+//			deltaZ = 75.0D;
+//		} else {
+//			deltaZ = 50.0D;
+//		}
+//
+//		this.boxesLocations = new LinkedList();
+//
+//		for(double dz = deltaZ; dz < 499.25D; dz += deltaZ) {
+//			int cnt = 0;
+//			boolean flag = false;
+//
+//			for(int i = 0; i < 12; ++i) {
+//				double dx = -(numberOfLanes / 2.0D) * (18.0D / numberOfLanes) + 0.75D + (double)i * 1.5D;
+//				if (Math.random() < difficulty) {
+//					this.boxesLocations.add(new Point(dx, 0.75D, -dz));
+//					++cnt;
+//				} else if (!flag) {
+//					++i;
+//					flag = true;
+//				}
+//
+//				if ((double)cnt > difficulty * 10.0D) {
+//					break;
+//				}
+//			}
+//		}
+//
 //	}
+//
+//	public TrackSegment(double difficulty) {
+//		this.box = new SkewedBox(1.5D, true);
+//		this.setDifficulty(difficulty);
+//	}
+//
+//	public void render(GL2 gl) {
+//		this.renderBoxes(gl);
+//		this.renderAsphalt(gl);
+//		this.renderGrass(gl);
+//	}
+//
+//	private void renderBoxes(GL2 gl) {
+//		Materials.setWoodenBoxMaterial(gl);
+//		Iterator var3 = this.boxesLocations.iterator();
+//
+//		while(var3.hasNext()) {
+//			Point p = (Point)var3.next();
+//			gl.glPushMatrix();
+//			gl.glTranslated((double)p.x, 0.0D, (double)p.z);
+//			this.box.render(gl);
+//			gl.glPopMatrix();
+//		}
+//
+//	}
+//
+//	private void renderAsphalt(GL2 gl) {
+//		Materials.setAsphaltMaterial(gl);
+//		gl.glPushMatrix();
+//		this.renderQuadraticTexture(gl, this.texRoad, 20.0D, 10.0D, 6, 500.0D);
+//		gl.glPopMatrix();
+//	}
+//
+//	private void renderGrass(GL2 gl) {
+//		Materials.setGreenMaterial(gl);
+//		double dx = 15.0D;
+//		gl.glTranslated(dx, 0.0D, 0.0D);
+//		this.renderQuadraticTexture(gl, this.texGrass, 10.0D, 10.0D, 2, 500.0D);
+//		gl.glTranslated(-2.0D * dx, 0.0D, 0.0D);
+//		this.renderQuadraticTexture(gl, this.texGrass, 10.0D, 10.0D, 2, 500.0D);
+//		gl.glPopMatrix();
+//	}
+//
+//	private void renderQuadraticTexture(GL2 gl, Texture tex, double quadWidth, double quadDepth, int split, double totalDepth) {
+//		gl.glEnable(3553);
+//		tex.bind(gl);
+//		gl.glTexEnvi(8960, 8704, 8448);
+//		gl.glTexParameteri(3553, 10241, 9987);
+//		gl.glTexParameteri(3553, 10240, 9729);
+//		gl.glTexParameteri(3553, 33083, 1);
+//		gl.glColor3d(1.0D, 0.0D, 0.0D);
+//		GLU glu = new GLU();
+//		GLUquadric quad = glu.gluNewQuadric();
+//		gl.glColor3d(1.0D, 0.0D, 0.0D);
+//		gl.glNormal3d(0.0D, 1.0D, 0.0D);
+//		double d = 1.0D / (double)split;
+//		double dz = quadDepth / (double)split;
+//		double dx = quadWidth / (double)split;
+//
+//		for(double tz = 0.0D; tz < totalDepth; tz += quadDepth) {
+//			for(double i = 0.0D; i < (double)split; ++i) {
+//				gl.glBegin(5);
+//
+//				for(double j = 0.0D; j <= (double)split; ++j) {
+//					gl.glTexCoord2d(j * d, (i + 1.0D) * d);
+//					gl.glVertex3d(-quadWidth / 2.0D + j * dx, 0.0D, -tz - (i + 1.0D) * dz);
+//					gl.glTexCoord2d(j * d, i * d);
+//					gl.glVertex3d(-quadWidth / 2.0D + j * dx, 0.0D, -tz - i * dz);
+//				}
+//
+//				gl.glEnd();
+//			}
+//		}
+//
+//		glu.gluDeleteQuadric(quad);
+//		gl.glDisable(3553);
+//	}
+//
+//	public void init(GL2 gl) {
+//		this.box.init(gl);
+//
+//		try {
+//			this.texRoad = TextureIO.newTexture(new File("Textures/RoadTexture.jpg"), true);
+//			this.texGrass = TextureIO.newTexture(new File("Textures/GrassTexture.jpg"), true);
+//		} catch (Exception var3) {
+//			System.err.print("Unable to read texture : " + var3.getMessage());
+//		}
+//
+//	}
+//
+//	public void destroy(GL2 gl) {
+//		this.texRoad.destroy(gl);
+//		this.texGrass.destroy(gl);
+//		this.box.destroy(gl);
+//	}
+//}
