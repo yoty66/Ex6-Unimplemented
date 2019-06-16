@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.texture.Texture;
@@ -25,6 +26,9 @@ public class TrackSegment implements IRenderable {
 	public final static double GRASS_TEXTURE_DEPTH = 10.0;
 	public final static double TRACK_LENGTH = 500.0;
 	public final static double BOX_LENGTH = 1.5;
+ //	GL2 prev_gl = null;
+//	boolean first = true;
+
 	private LinkedList<Point> boxesLocations; // Store the boxes centroids (center points) here.
 	// TODO Add additional fields, for example:
 	//		- Add wooden box model (you will only need one object which can be rendered many times)
@@ -32,43 +36,48 @@ public class TrackSegment implements IRenderable {
 	//      - Add grass and asphalt textures.
 	private Texture AsphaltTexture;
 	private Texture GrassTexture;
+	private boolean isSetDifficulty=false;
 
 	public void setDifficulty(double difficulty) {
 		// TODO: Set the difficulty of the track segment. Here you decide what are the boxes locations.
 		//		 We provide a simple implementation. You can change it if you want. But if you do decide to use it, then it is your responsibility to understand the logic behind it.
 		//       Note: In our implementation, the difficulty is the probability of a box to appear in the scene.
 		//             We divide the scene into rows of boxes and we sample boxes according the difficulty probability.
-		difficulty = Math.min(difficulty, 0.95);
-		difficulty = Math.max(difficulty, 0.05);
-		double numberOfLanes = 4.0;
-		double deltaZ = 0.0;
-		if (difficulty < 0.25) {
-			deltaZ = 100.0;
-		} else if (difficulty < 0.5) {
-			deltaZ = 75.0;
-		} else {
-			deltaZ = 50.0;
-		}
-		boxesLocations = new LinkedList<Point>();
-		for (double dz = deltaZ; dz < TRACK_LENGTH - BOX_LENGTH / 2.0; dz += deltaZ) {
-			int cnt = 0; // Number of boxes sampled at each row.
-			boolean flag = false;
-			for (int i = 0; i < 12; i++) {
-				double dx = -((double) numberOfLanes / 2.0) * ((ASPHALT_TEXTURE_WIDTH - 2.0) / numberOfLanes) + BOX_LENGTH / 2.0
-						+ i * BOX_LENGTH;
-				if (Math.random() < difficulty) {
-					boxesLocations.add(new Point(dx, BOX_LENGTH / 2.0, -dz));
-					cnt += 1;
-				} else if (!flag) {// The first time we don't sample a box then we also don't sample the box next to. We want enough space for the car to pass through.
-					i += 1;
-					flag = true;
-				}
-				if (cnt > difficulty * 10) {
-					break;
+//		if(!isSetDifficulty) {
+//			this.isSetDifficulty=true;
+			difficulty = Math.min(difficulty, 0.95);
+			difficulty = Math.max(difficulty, 0.05);
+			double numberOfLanes = 4.0;
+			double deltaZ = 0.0;
+			if (difficulty < 0.25) {
+				deltaZ = 100.0;
+			} else if (difficulty < 0.5) {
+				deltaZ = 75.0;
+			} else {
+				deltaZ = 50.0;
+			}
+			boxesLocations = new LinkedList<Point>();
+			for (double dz = deltaZ; dz < TRACK_LENGTH - BOX_LENGTH / 2.0; dz += deltaZ) {
+				int cnt = 0; // Number of boxes sampled at each row.
+				boolean flag = false;
+				for (int i = 0; i < 12; i++) {
+					double dx = -((double) numberOfLanes / 2.0) * ((ASPHALT_TEXTURE_WIDTH - 2.0) / numberOfLanes) + BOX_LENGTH / 2.0
+							+ i * BOX_LENGTH;
+					if (Math.random() < difficulty) {
+						boxesLocations.add(new Point(dx, BOX_LENGTH / 2.0, -dz));
+						cnt += 1;
+					} else if (!flag) {// The first time we don't sample a box then we also don't sample the box next to. We want enough space for the car to pass through.
+						i += 1;
+						flag = true;
+					}
+					if (cnt > difficulty * 10) {
+						break;
+					}
 				}
 			}
+
 		}
-	}
+//	}
 
 	public TrackSegment(double difficulty) {
 		// TODO initialize your fields here.
@@ -83,38 +92,30 @@ public class TrackSegment implements IRenderable {
 		// TODO: Render the track segment
 //		gl.glPushMatrix();
         renderObstacles(gl);
-//        renderGrass(gl);
-//        renderRoad(gl);
+
+        renderGrass(gl);
+        renderRoad(gl);
 //		gl.glPopMatrix();
 	}
 
 	private void renderObstacles(GL2 gl)
     {
         Materials.setWoodenBoxMaterial(gl);
-        Iterator var3 = this.boxesLocations.iterator();
-
-        while(var3.hasNext()) {
-            Point p = (Point)var3.next();
-            gl.glPushMatrix();
-            gl.glTranslated((double)p.x, 0.0D, (double)p.z);
-            this.box.render(gl);
-            gl.glPopMatrix();
+        Iterator <Point>iter=boxesLocations.listIterator();
+        while(iter.hasNext())
+        {
+        gl.glPushMatrix();
+        Point location= iter.next();
+        gl.glTranslated(location.x,0,location.z);
+        box.render(gl);
+        gl.glPopMatrix();
         }
 
-//        Iterator <Point>iter=boxesLocations.listIterator();
-//        while(iter.hasNext())
-//        {
-//        gl.glPushMatrix();
-//        Point location= iter.next();
-//        gl.glTranslated(location.x,0,location.z);
-//        box.render(gl);
-//        iter.remove();
-//        gl.glPopMatrix();
-//        }
     }
 	private void renderGrass(GL2 gl)
 	{
 		gl.glPushMatrix();
+		Materials.setGreenMaterial(gl);
 		gl.glTranslated(ASPHALT_TEXTURE_WIDTH/2,0,0);
 		setTextureParams(gl,this.GrassTexture);
 		renderQuadraticTexture(gl, GRASS_TEXTURE_WIDTH,GRASS_TEXTURE_DEPTH,GRASS_TEXTURE_WIDTH,TRACK_LENGTH);
@@ -132,6 +133,7 @@ public class TrackSegment implements IRenderable {
 	private void renderRoad(GL2 gl)
 	{
 		gl.glPushMatrix();
+		Materials.setAsphaltMaterial(gl);
 		gl.glTranslated(-ASPHALT_TEXTURE_WIDTH/2,0,0);
 		setTextureParams(gl,this.AsphaltTexture);
 		renderQuadraticTexture(gl, ASPHALT_TEXTURE_WIDTH,ASPHALT_TEXTURE_DEPTH,ASPHALT_TEXTURE_WIDTH,TRACK_LENGTH);

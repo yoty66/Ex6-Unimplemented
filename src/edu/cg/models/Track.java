@@ -57,3 +57,54 @@ public class Track implements IRenderable {
 	}
 
 }
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
+//package edu.cg.models;
+//
+//import com.jogamp.opengl.GL2;
+//
+//public class Track implements IRenderable {
+//    private TrackSegment currentTrackSegment = null;
+//    private TrackSegment nextTrackSegment = null;
+//    private double currentDifficulty = 0.5D;
+//    private final double DIFFICULTY_DELTA = 0.05D;
+//    private final double MAXIMUM_DIFFICULTY = 0.95D;
+//
+//    public Track() {
+//        this.currentTrackSegment = new TrackSegment(this.currentDifficulty);
+//        this.nextTrackSegment = new TrackSegment(this.currentDifficulty + 0.05D);
+//    }
+//
+//    public void render(GL2 gl) {
+//        gl.glPushMatrix();
+//        this.currentTrackSegment.render(gl);
+//        gl.glTranslated(0.0D, 0.0D, -500.0D);
+//        this.nextTrackSegment.render(gl);
+//        gl.glPopMatrix();
+//    }
+//
+//    public void init(GL2 gl) {
+//        this.currentTrackSegment.init(gl);
+//        this.nextTrackSegment.init(gl);
+//    }
+//
+//    public void destroy(GL2 gl) {
+//        this.currentTrackSegment.destroy(gl);
+//        this.nextTrackSegment.destroy(gl);
+//        this.currentTrackSegment = this.nextTrackSegment = null;
+//    }
+//
+//    public void changeTrack(GL2 gl) {
+//        TrackSegment tmp = this.currentTrackSegment;
+//        this.currentTrackSegment = this.nextTrackSegment;
+//        this.currentDifficulty += 0.05D;
+//        this.currentDifficulty = Math.min(this.currentDifficulty, 0.95D);
+//        tmp.setDifficulty(this.currentDifficulty + 0.05D);
+//        this.nextTrackSegment = tmp;
+//    }
+//}
+//

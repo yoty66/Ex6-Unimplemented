@@ -33,6 +33,8 @@ public class NeedForSpeed implements GLEventListener {
 	// TODO: add fields as you want. For example:
 	// - Car initial position (should be fixed).
 	// - Camera initial position (should be fixed)
+	private TrackSegment test=null;
+
 
 	public NeedForSpeed(Component glPanel) {
 		this.glPanel = glPanel;
@@ -68,18 +70,18 @@ public class NeedForSpeed implements GLEventListener {
 		setupLights(gl);
 		// Step (4) render the car.
 
-//		renderCar(gl);
+		renderCar(gl);
 		// Step (5) render the track.
-//		renderTrack(gl);
+		renderTrack(gl);
 
-		//test
+		//test//
 //		SkewedBox box=new SkewedBox(TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,TrackSegment.BOX_LENGTH,true) ;
 //		box.init(gl);
 //		box.test(gl);
-
-		TrackSegment segment=new TrackSegment(0.05);
-		segment.init(gl);
-		segment.render(gl);
+//		if(test==null)
+//		 test=new TrackSegment(0.05);
+//		test.init(gl);
+//		test.render(gl);
 //		segment.testRenderQuadraticTexture(gl);
 
 	}
@@ -120,6 +122,10 @@ public class NeedForSpeed implements GLEventListener {
 	private void renderTrack(GL2 gl) {
 		// TODO: Render the track. 
 		//       * Note: the track shouldn't be translated. It should be fixed.
+		gl.glPushMatrix();
+		this.gameTrack.render(gl);
+		gl.glPopMatrix();
+
 	}
 
 	private void renderCar(GL2 gl) {
