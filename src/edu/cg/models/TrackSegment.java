@@ -174,12 +174,12 @@ public class TrackSegment implements IRenderable {
 
 		this.boxesLocations = new LinkedList();
 
-		for(double dz = deltaZ; dz < 499.25D; dz += deltaZ) {
+		for (double dz = deltaZ; dz < 499.25D; dz += deltaZ) {
 			int cnt = 0;
 			boolean flag = false;
 
-			for(int i = 0; i < 12; ++i) {
-				double dx = -(numberOfLanes / 2.0D) * (18.0D / numberOfLanes) + 0.75D + (double)i * 1.5D;
+			for (int i = 0; i < 12; ++i) {
+				double dx = -(numberOfLanes / 2.0D) * (18.0D / numberOfLanes) + 0.75D + (double) i * 1.5D;
 				if (Math.random() < difficulty) {
 					this.boxesLocations.add(new Point(dx, 0.75D, -dz));
 					++cnt;
@@ -188,7 +188,7 @@ public class TrackSegment implements IRenderable {
 					flag = true;
 				}
 
-				if ((double)cnt > difficulty * 10.0D) {
+				if ((double) cnt > difficulty * 10.0D) {
 					break;
 				}
 			}
@@ -211,10 +211,10 @@ public class TrackSegment implements IRenderable {
 //		Materials.setWoodenBoxMaterial(gl);
 		Iterator var3 = this.boxesLocations.iterator();
 
-		while(var3.hasNext()) {
-			Point p = (Point)var3.next();
+		while (var3.hasNext()) {
+			Point p = (Point) var3.next();
 			gl.glPushMatrix();
-			gl.glTranslated((double)p.x, 0.0D, (double)p.z);
+			gl.glTranslated((double) p.x, 0.0D, (double) p.z);
 			this.box.render(gl);
 			gl.glPopMatrix();
 		}
@@ -238,245 +238,85 @@ public class TrackSegment implements IRenderable {
 		gl.glPopMatrix();
 	}
 
-	private void renderQuadraticTexture(GL2 gl, Texture tex, double width, double depth) {
+
+	// creates totalWidth/width x totalDepth/depth quadratics with the given texture .
+	// @pre - totalWidth/width, totalDepth/depth are integers
+	//
+	private void renderQuadraticTexture(GL2 gl, Texture tex, double width, double depth, double totalWidth, double totalDepth) {
 
 
 		gl.glEnable(GL_TEXTURE_2D);
-
-			this.init(gl);
+		this.init(gl);
 		tex.bind(gl);
-		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-
-
-		depth=20;
-		width=20;
-				double [] p1={0,0,0};
-				double [] t1={0,0,0};
-				double [] p2={0,0,-depth/2};
-				double [] t2={0,0,1.0/2};
-				double [] p3={0,0,-depth};
-				double [] t3={0,0,1.0/2};
-				double [] p4={width/2,0,0};
-				double [] t4={1.0/2,0,0};
-				double [] p5={width/2,0,-depth/2};
-				double [] t5={1.0/2,0,1.0/2};
-				double [] p6={width/2,0,-depth};
-				double [] t6={1.0/2,0,1.0};
-				double [] p7={width,0,0};
-				double [] t7={1,0,0};
-				double [] p8={width,0,-depth/2};
-				double [] t8={1.0,0,1.0/2};
-				double [] p9={width,0,-depth};
-				double [] t9={1.0,0,1.0};
-
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glEnable(GL2.GL_NORMALIZE);
 
 
+		QuadPointsHolder points = new QuadPointsHolder();
+		for (double currentDepth = 0; currentDepth < totalDepth; currentDepth += depth)
+		{
+			points.setBottomLeft(new double[]{0, 0, -currentDepth});
+			points.setTopLeft(new double[]{0, 0, -1 * (currentDepth + depth)  });
+			for (double currentWidth = width; currentWidth <=totalWidth; currentWidth += width)
+				{
+					points.setBottomRight(new double[]{currentWidth, 0, -currentDepth});
+					points.setTopRight(new double[]{currentWidth, 0, -1 * (currentDepth + depth)  });
+					renderTextureQuad(gl,points);
+					points.setBottomLeft(points.bottomRight);
+					points.setTopLeft(points.topRight);
+				}
+		}
+		gl.glEnd();
+		gl.glDisable(GL_TEXTURE_2D);
+	}
 
 
-//				Vec v1 = new Vec(p2[0],p2[1],p2[2]);
-//				Vec v2 = new Vec(p5[0],p5[1],p5[2]);
-//				Vec v3 = new Vec(p4[0],p4[1],p4[2]);
-//				Vec v1Neg = v1.mult(-1);
-//				Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//				gl.glNormal3d(0, 1, 0);
-////				Materials.setMaterialTire(gl);
-//				//Bottom low square
-//				gl.glVertex3d(p2[0],p2[1],p2[2]);
-////				gl.glTexCoord2d(t2[0],t2[2]);
-//				gl.glTexCoord2d(0,0);
-//				gl.glVertex3d(p5[0],p5[1],p5[2]);
-////				gl.glTexCoord2d(t5[0],t5[2]);
-//		gl.glTexCoord2d(0,1);
-//				gl.glVertex3d(p4[0],p4[1],p4[2]);
-////				gl.glTexCoord2d(t4[0],t4[2]);
-//		gl.glTexCoord2d(1,1);
-//				gl.glVertex3d(p1[0],p1[1],p1[2]);
-////				gl.glTexCoord2d(t1[0],t1[2]);
-//		gl.glTexCoord2d(1,0);
+	//	Renders a texture quad on a -z-x-plane . The points are given relative to the x (right left) and the negative -z (top bottom)
+	//  Assume a Texture is already defind and bounded  .
+	public void renderTextureQuad(GL2 gl,QuadPointsHolder points )
+	{
 
-		Vec v1,v2,v3,normal,v1Neg;
-//		Vec v1 = new Vec(p4[0],p4[1],p4[2]);
-//		Vec v2 = new Vec(p1[0],p1[1],p1[2]);
-//		Vec v3 = new Vec(p2[0],p2[1],p2[2]);
-//		Vec v1Neg = v1.mult(-1);
-//		Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//
-//		gl.glNormal3d(normal.x, normal.y, normal.z);
-//
-//		gl.glVertex3d(p4[0],p4[1],p4[2]);//p4
-//		gl.glTexCoord2d(0.0D, 0.0D);
-//
-//		gl.glVertex3d(p1[0],p1[1],p1[2]);//p1
-//		gl.glTexCoord2d(0.0D, 1.0D);
-//
-//		gl.glVertex3d(p2[0],p2[1],p2[2]);//p2
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//
-//		gl.glVertex3d(p3[0],p3[1],p3[2]);//p3
-//		gl.glTexCoord2d(1.0D, 0.0D);
-
-		//		normal to box
-//		v1 = new Vec(p5[0],p5[1],p5[2]);
-//		v2 = new Vec(p8[0],p8[1],p8[2]);
-//		v3 = new Vec(p7[0],p7[1],p7[2]);
-//		v1Neg = v1.mult(-1);
-//		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//		gl.glNormal3d(normal.x, normal.y, normal.z);
-//
-//		gl.glVertex3d(p5[0],p5[1],p5[2]);
-//		gl.glTexCoord2d(0.0D, 0.0D);
-//
-//		gl.glVertex3d(p8[0],p8[1],p8[2]);
-//		gl.glTexCoord2d(0.0D, 1.0D);
-//
-//		gl.glVertex3d(p7[0],p7[1],p7[2]);
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//
-//		gl.glVertex3d(p6[0],p6[1],p6[2]);
-//		gl.glTexCoord2d(1.0D, 0.0D);
-//
-//		v1 = new Vec(p8[0],p8[1],p8[2]);
-//		v2 = new Vec(p5[0],p5[1],p5[2]);
-//		v3 = new Vec(p1[0],p1[1],p1[2]);
-//		v1Neg = v1.mult(-1);
-//		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//		gl.glNormal3d(normal.x, normal.y, normal.z);
-//		Top view y-axis:
-//		gl.glVertex3d(p8[0],p8[1],p8[2]);
-//		gl.glTexCoord2d(0.0D, 0.0D);
-//
-//		gl.glVertex3d(p5[0],p5[1],p5[2]);
-//		gl.glTexCoord2d(0.0D, 1.0D);
-//
-//		gl.glVertex3d(p1[0],p1[1], p1[2]);
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//
-//		gl.glVertex3d(p4[0],p4[1],p4[2]);
-//		gl.glTexCoord2d(1.0D, 0.0D);
-//
-//
-//		v1 = new Vec(p7[0],p7[1],p7[2]);
-//		v2 = new Vec(p3[0],p3[1],p3[2]);
-//		v3 = new Vec(p2[0],p2[1],p2[2]);
-//		v1Neg = v1.mult(-1);
-//		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//		gl.glNormal3d(normal.x, normal.y, normal.z);
-//
-//		gl.glVertex3d(p7[0],p7[1],p7[2]);
-//		gl.glTexCoord2d(0.0D, 0.0D);
-//
-//		gl.glVertex3d(p3[0],p3[1],p3[2]);
-//		gl.glTexCoord2d(0.0D, 1.0D);
-//
-//		gl.glVertex3d(p2[0],p2[1],p2[2]);
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//
-//		gl.glVertex3d(p6[0],p6[1],p6[2]);
-//		gl.glTexCoord2d(1.0D, 0.0D);
-
-//
-		v1 = new Vec(p4[0],p4[1],p4[2]);
-		v2 = new Vec(p5[0],p5[1],p5[2]);
-		v3 = new Vec(p2[0],p2[1],p2[2]);
-		v1Neg = v1.mult(-1);
-		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
 
 		gl.glNormal3d(0, 1, 0);
-//		Side view z-axis:
-		gl.glVertex3d(p4[0],p4[1],p4[2]);
-//		gl.glTexCoord2d(p4[0], p4[2]);
+		gl.glVertex3d(points.bottomRight[0],points.bottomRight[1],points.bottomRight[2]);
 		gl.glTexCoord2d(0, 0);
 
-		gl.glVertex3d(p5[0],p5[1],p5[2]);
-		gl.glTexCoord2d(p5[0], p5[2]);
+		gl.glVertex3d(points.topRight[0],points.topRight[1],points.topRight[2]);
 		gl.glTexCoord2d(0.0D, 1.0D);
 
-		gl.glVertex3d(p2[0],p2[1],p2[2]);
+		gl.glVertex3d(points.topLeft[0],points.topLeft[1],points.topLeft[2]);
 		gl.glTexCoord2d(1.0D, 1.0D);
-//		gl.glTexCoord2d(p2[0], p2[2]);
-		gl.glVertex3d(p1[0],p1[1],p1[2]);
+		gl.glVertex3d(points.bottomLeft[0],points.bottomLeft[1],points.bottomLeft[2]);
 		gl.glTexCoord2d(1.0D, 0.0D);
-//		gl.glTexCoord2d(p1[0], p1[2]);
-//
-//
-//		v1 = new Vec(p7[0],p7[1],p7[2]);
-//		v2 = new Vec(p8[0],p8[1],p8[2]);
-//		v3 = new Vec(p4[0],p4[1],p4[2]);
-//		v1Neg = v1.mult(-1);
-//		normal = v2.add(v1Neg).cross(v3.add(v1Neg));
-//
-//		gl.glNormal3d(normal.x, normal.y, normal.z);
-//		gl.glVertex3d(p7[0],p7[1],p7[2]);
-//		gl.glTexCoord2d(0.0D, 0.0D);
-//
-//		gl.glVertex3d(p8[0],p8[1],p8[2]);
-//		gl.glTexCoord2d(0.0D, 1.0D);
-//
-//		gl.glVertex3d(p4[0],p4[1],p4[2]);
-//		gl.glTexCoord2d(1.0D, 1.0D);
-//
-//		gl.glVertex3d(p3[0],p3[1],p3[2]);
-//		gl.glTexCoord2d(1.0D, 0.0D);
+	}
 
-		gl.glEnd();
+//	Renders a texture quad on a -z-x-plane . The points are given relative to the x (right left) and the negative -z (top bottom)
+//  Assume the Texture is already defind and binded .
+	public void renderTextureQuad2(GL2 gl, double [] topLeft,double []  topRight,double [] bottomRight, double [] bottomLeft ){
 
+//		Vec v1 = new Vec(bottomRight[0],bottomRight[1],bottomRight[2]);
+//		Vec v2 = new Vec(topRight[0],topRight[1],topRight[2]);
+//		Vec v3 = new Vec(topLeft[0],topLeft[1],topLeft[2]);
+//		Vec v1Neg = v1.mult(-1);
+//		Vec normal = v2.add(v1Neg).cross(v3.add(v1Neg));
 
-		gl.glDisable(GL_TEXTURE_2D);
+		gl.glNormal3d(0, 1, 0);
+		gl.glVertex3d(bottomRight[0],bottomRight[1],bottomRight[2]);
+		gl.glTexCoord2d(0, 0);
 
-			}
-//		}
+		gl.glVertex3d(topRight[0],topRight[1],topRight[2]);
+		gl.glTexCoord2d(0.0D, 1.0D);
 
-
-//		glu.gluDeleteQuadric(quad);
-//		gl.glDisable(3553);
-//	}
-
-//	private void renderQuadraticTexture(GL2 gl, Texture tex, double quadWidth, double quadDepth, int split, double totalDepth) {
-//		gl.glEnable(3553);
-//		tex.bind(gl);
-//		gl.glTexEnvi(8960, 8704, 8448);
-//		gl.glTexParameteri(3553, 10241, 9987);
-//		gl.glTexParameteri(3553, 10240, 9729);
-//		gl.glTexParameteri(3553, 33083, 1);
-//		gl.glColor3d(1.0D, 0.0D, 0.0D);
-//		GLU glu = new GLU();
-//		GLUquadric quad = glu.gluNewQuadric();
-//		gl.glColor3d(1.0D, 0.0D, 0.0D);
-//		gl.glNormal3d(0.0D, 1.0D, 0.0D);
-//		double d = 1.0D / (double)split;
-//		double dz = quadDepth / (double)split;
-//		double dx = quadWidth / (double)split;
-//
-//		for(double tz = 0.0D; tz < totalDepth; tz += quadDepth) {
-//			for(double i = 0.0D; i < (double)split; ++i) {
-//				gl.glBegin(5);
-//
-//				for(double j = 0.0D; j <= (double)split; ++j) {
-//					double arg1=j * d;
-//					double arg2=(i + 1.0D) * d;
-//					gl.glTexCoord2d(arg1,arg2) ;
-//					double arg3=-quadWidth / 2.0D + j * dx;
-//					double arg4=-tz - (i + 1.0D) * dz;
-//					gl.glVertex3d(arg3, 0.0D, arg4);
-//					gl.glTexCoord2d(j * d, i * d);
-//					double arg5=-quadWidth / 2.0D + j * dx;
-//					double arg6=--tz - i * dz;
-//					gl.glVertex3d(arg5, 0.0D, arg6);
-//				}
-//
-//				gl.glEnd();
-//			}
-//		}
-//
-//		glu.gluDeleteQuadric(quad);
-//		gl.glDisable(3553);
-//	}
+		gl.glVertex3d(topLeft[0],topLeft[1],topLeft[2]);
+		gl.glTexCoord2d(1.0D, 1.0D);
+		gl.glVertex3d(bottomLeft[0],bottomLeft[1],bottomLeft[2]);
+		gl.glTexCoord2d(1.0D, 0.0D);
+	}
 
 	public void testRenderQuadraticTexture(GL2 gl){
-		this.renderQuadraticTexture(gl, this.texGrass, 20,  500.0D);
+		this.renderQuadraticTexture(gl, this.texGrass, 5,5, 10, 500.0D);
 	}
 
 	public void init(GL2 gl) {
@@ -495,5 +335,28 @@ public class TrackSegment implements IRenderable {
 		this.texRoad.destroy(gl);
 		this.texGrass.destroy(gl);
 		this.box.destroy(gl);
+	}
+
+	private class QuadPointsHolder{
+		public double [] topLeft;
+		public double []  topRight;
+		public double [] bottomRight;
+		public double [] bottomLeft=null;
+
+		public void setTopLeft(double[] topLeft) {
+			this.topLeft = topLeft;
+		}
+
+		public void setTopRight(double[] topRight) {
+			this.topRight = topRight;
+		}
+
+		public void setBottomRight(double[] bottomRight) {
+			this.bottomRight = bottomRight;
+		}
+
+		public void setBottomLeft(double[] bottomLeft) {
+			this.bottomLeft = bottomLeft;
+		}
 	}
 }
